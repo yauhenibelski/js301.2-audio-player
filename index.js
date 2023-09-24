@@ -26,15 +26,26 @@ class App {
     this.currentTime = createElement({ tagName: 'span', className: 'current-time', text: '0s' });
     this.trackTime = createElement({ tagName: 'span', className: 'track-time' });
     this.timeContainer = createElement({ tagName: 'div', className: 'time-container'});
+    this.authorText = createElement({ tagName: 'p', className: '' });
+    this.trackName = createElement({ tagName: 'p', className: '' });
+    this.descriptionContainer = createElement({ tagName: 'p', className: 'description-container' });
+    this.footer = createElement({ tagName: 'footer'});
+    this.year = createElement({ tagName: 'span', text: '2023'});
+    this.githubLink = createElement({ tagName: 'a', text: 'Yauheni Belski'});
+    this.rsLogo = createElement({ tagName: 'a', className: 'logo'});
 
     this.isPlay = false;
     this.currentTrackIndex = 0;
     this.currentTrack = music[this.currentTrackIndex];
+    this.githubLink.href = 'https://github.com/yauhenibelski';
+    this.rsLogo.href = 'https://rs.school/js-stage0/';
+    this.rsLogo.style.backgroundImage = 'url(https://rs.school/images/rs_school_js.svg)'
 
     this.progressBar.type = 'range';
   }
   nextTrack() {
     this.currentTrack.audio.currentTime = 0;
+    this.currentTime.innerHTML = '0';
     if (this.isPlay) {
       this.currentTrack.audio.pause();
       this.currentTrackIndex = music[this.currentTrackIndex + 1] ? this.currentTrackIndex + 1 : 0;
@@ -52,6 +63,7 @@ class App {
 
   previousTrack() {
     this.currentTrack.audio.currentTime = 0;
+    this.currentTime.innerHTML = '0';
     if (this.isPlay) {
       this.currentTrack.audio.pause();
       this.currentTrackIndex = music[this.currentTrackIndex - 1] ? this.currentTrackIndex - 1 : music.length - 1;
@@ -103,7 +115,12 @@ class App {
     setTimeout(() => {
       this.trackTime.innerHTML = (this.currentTrack.audio.duration/ 60).toFixed(2);
       this.progressBar.max = `${Math.round(this.currentTrack.audio.duration)}`;
+      this.authorText.innerHTML = `${this.currentTrack.author} -`;
+      this.trackName.innerHTML = `- ${this.currentTrack.name}`;
     }, 100);
+
+    this.descriptionContainer.append(this.authorText);
+    this.descriptionContainer.append(this.trackName);
 
     this.timeContainer.append(this.currentTime);
     this.timeContainer.append(this.trackTime);
@@ -112,12 +129,18 @@ class App {
     this.btnContainer.append(this.playStopBTN);
     this.btnContainer.append(this.nextTrackBTN);
 
+    this.controlContainer.append(this.descriptionContainer);
     this.controlContainer.append(this.progressBar);
     this.controlContainer.append(this.timeContainer);
     this.controlContainer.append(this.btnContainer);
 
+    this.footer.append(this.rsLogo);
+    this.footer.append(this.githubLink);
+    this.footer.append(this.year);
+
     this.container.append(this.coverImg);
     this.container.append(this.controlContainer);
+    this.container.append(this.footer);
     this.appWrap.append(this.container);
 
     document.body.append(this.audio);
