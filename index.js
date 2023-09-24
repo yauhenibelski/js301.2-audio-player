@@ -98,8 +98,7 @@ class App {
         this.currentTrack.audio.play();
         this.interval = setInterval(() => {
           if ( this.currentTrack.audio.ended) {
-            console.dir(this.currentTrack.audio);
-            clearInterval(this.interval);
+            this.nextTrack();
           }
           this.progressBar.value = Math.round(this.currentTrack.audio.currentTime);
           this.currentTime.innerHTML = `${Math.trunc(this.currentTrack.audio.currentTime)}s`;
