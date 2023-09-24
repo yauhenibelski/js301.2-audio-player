@@ -28,13 +28,50 @@ class App {
     this.timeContainer = createElement({ tagName: 'div', className: 'time-container'});
 
     this.isPlay = false;
-    this.currentTrack = music[0];
+    this.currentTrackIndex = 0;
+    this.currentTrack = music[this.currentTrackIndex];
 
     this.progressBar.type = 'range';
+  }
+  nextTrack() {
+    this.currentTrack.audio.currentTime = 0;
+    if (this.isPlay) {
+      this.currentTrack.audio.pause();
+      this.currentTrackIndex = music[this.currentTrackIndex + 1] ? this.currentTrackIndex + 1 : 0;
+      this.currentTrack = music[this.currentTrackIndex];
+      this.render();
+      this.currentTrack.audio.play();
+      this.isPlay = true;
+      this.playStopBTN.innerHTML = '||';
+    } else {
+      this.currentTrackIndex = music[this.currentTrackIndex + 1] ? this.currentTrackIndex + 1 : 0;
+      this.currentTrack = music[this.currentTrackIndex];
+      this.render();
+    }
+  }
+
+  previousTrack() {
+    this.currentTrack.audio.currentTime = 0;
+    if (this.isPlay) {
+      this.currentTrack.audio.pause();
+      this.currentTrackIndex = music[this.currentTrackIndex - 1] ? this.currentTrackIndex - 1 : music.length - 1;
+      this.currentTrack = music[this.currentTrackIndex];
+      this.render();
+      this.currentTrack.audio.play();
+      this.isPlay = true;
+      this.playStopBTN.innerHTML = '||';
+    } else {
+      this.currentTrackIndex = music[this.currentTrackIndex - 1] ? this.currentTrackIndex - 1 : music.length - 1;
+      this.currentTrack = music[this.currentTrackIndex];
+      this.render();
+    }
   }
 
   controls() {
     this.progressBar.oninput = (e) => this.currentTrack.audio.currentTime = e.target.value;
+
+    this.nextTrackBTN.onclick = () =>  this.nextTrack();
+    this.previousTrackBTN.onclick = () =>  this.previousTrack();
 
     this.playStopBTN.onclick = () => {
       if (this.isPlay) {
@@ -48,10 +85,12 @@ class App {
         this.playStopBTN.innerHTML = '||'
         this.currentTrack.audio.play();
         this.interval = setInterval(() => {
+          if ( this.currentTrack.audio.ended) {
+            console.dir(this.currentTrack.audio);
+            clearInterval(this.interval);
+          }
           this.progressBar.value = Math.round(this.currentTrack.audio.currentTime);
           this.currentTime.innerHTML = `${Math.trunc(this.currentTrack.audio.currentTime)}s`;
-          console.log(this.currentTrack.audio.currentTime)
-          console.dir(this.progressBar)
         }, 1000);
       }
     };
@@ -83,6 +122,11 @@ class App {
 
     document.body.append(this.audio);
     document.body.append(this.appWrap);
+  }
+
+  render() {
+    document.body.innerHTML = '';
+    this.createElements();
   }
 
   ran() {
