@@ -23,8 +23,8 @@ class App {
     this.nextTrackBTN = createElement({ tagName: 'button', className: '', text: '>>' });
     this.previousTrackBTN = createElement({ tagName: 'button', className: '', text: '<<' });
     this.progressBar = createElement({ tagName: 'input', className: 'progress-bar' });
-    this.currentTime = createElement({ tagName: 'span', className: 'current-time', text: '0s' });
-    this.trackTime = createElement({ tagName: 'span', className: 'track-time', text: '0' });
+    this.currentTime = createElement({ tagName: 'span', className: 'current-time', text: '0.00' });
+    this.trackTime = createElement({ tagName: 'span', className: 'track-time', text: '0.00' });
     this.timeContainer = createElement({ tagName: 'div', className: 'time-container'});
     this.authorText = createElement({ tagName: 'p', className: '' });
     this.trackName = createElement({ tagName: 'p', className: '' });
@@ -43,47 +43,41 @@ class App {
 
     this.progressBar.type = 'range';
   }
-  nextTrack() {
+  changeTrack(value) {
     this.currentTrack.audio.currentTime = 0;
-    this.currentTime.innerHTML = '0';
-    if (this.isPlay) {
-      this.currentTrack.audio.pause();
+    this.currentTime.innerHTML = '0.00';
+    if (this.isPlay) this.currentTrack.audio.pause();
+
+    if (value === 'next') {
       this.currentTrackIndex = music[this.currentTrackIndex + 1] ? this.currentTrackIndex + 1 : 0;
-      this.currentTrack = music[this.currentTrackIndex];
+    } else {
+      this.currentTrackIndex = music[this.currentTrackIndex - 1] ? this.currentTrackIndex - 1 : music.length - 1;
+    }
+
+    this.currentTrack = music[this.currentTrackIndex];
+
+    if (this.isPlay) {
       this.render();
       this.currentTrack.audio.play();
       this.isPlay = true;
       this.playStopBTN.innerHTML = '||';
     } else {
-      this.currentTrackIndex = music[this.currentTrackIndex + 1] ? this.currentTrackIndex + 1 : 0;
-      this.currentTrack = music[this.currentTrackIndex];
       this.render();
     }
   }
 
-  previousTrack() {
-    this.currentTrack.audio.currentTime = 0;
-    this.currentTime.innerHTML = '0';
-    if (this.isPlay) {
-      this.currentTrack.audio.pause();
-      this.currentTrackIndex = music[this.currentTrackIndex - 1] ? this.currentTrackIndex - 1 : music.length - 1;
-      this.currentTrack = music[this.currentTrackIndex];
-      this.render();
-      this.currentTrack.audio.play();
-      this.isPlay = true;
-      this.playStopBTN.innerHTML = '||';
-    } else {
-      this.currentTrackIndex = music[this.currentTrackIndex - 1] ? this.currentTrackIndex - 1 : music.length - 1;
-      this.currentTrack = music[this.currentTrackIndex];
-      this.render();
-    }
+  setTrackDescription() {
+    this.trackTime.innerHTML = (this.currentTrack.audio.duration/ 60).toFixed(2);
+    this.progressBar.max = `${Math.round(this.currentTrack.audio.duration)}`;
+    this.authorText.innerHTML = `${this.currentTrack.author} -`;
+    this.trackName.innerHTML = `- ${this.currentTrack.name}`;
   }
 
   controls() {
     this.progressBar.oninput = (e) => this.currentTrack.audio.currentTime = e.target.value;
 
-    this.nextTrackBTN.onclick = () =>  this.nextTrack();
-    this.previousTrackBTN.onclick = () =>  this.previousTrack();
+    this.nextTrackBTN.onclick = () =>  this.changeTrack('next');
+    this.previousTrackBTN.onclick = () =>  this.changeTrack();
 
     this.playStopBTN.onclick = () => {
       if (this.isPlay) {
@@ -96,12 +90,14 @@ class App {
         this.isPlay = true;
         this.playStopBTN.innerHTML = '||'
         this.currentTrack.audio.play();
+
         this.interval = setInterval(() => {
-          if ( this.currentTrack.audio.ended) {
-            this.nextTrack();
+          const timer = new Date(Math.round(this.currentTrack.audio.currentTime) * 1000)
+          if ( this.currentTrack.audio.ended ) {
+            this.changeTrack('next');
           }
           this.progressBar.value = Math.round(this.currentTrack.audio.currentTime);
-          this.currentTime.innerHTML = `${Math.trunc(this.currentTrack.audio.currentTime)}s`;
+          this.currentTime.innerHTML = `${timer.getMinutes()}.${timer.getSeconds() < 10 ? `0${timer.getSeconds()}` : timer.getSeconds()}`;
         }, 1000);
       }
     };
@@ -111,16 +107,9 @@ class App {
     this.coverImg.style.backgroundImage = this.currentTrack.coverUrl;
     this.progressBar.value = 0;
 
-    window.onload = () => {
-      this.trackTime.innerHTML = (this.currentTrack.audio.duration/ 60).toFixed(2);
-      this.progressBar.max = `${Math.round(this.currentTrack.audio.duration)}`;
-      this.authorText.innerHTML = `${this.currentTrack.author} -`;
-      this.trackName.innerHTML = `- ${this.currentTrack.name}`;
-    }
-    this.trackTime.innerHTML = (this.currentTrack.audio.duration/ 60).toFixed(2);
-    this.progressBar.max = `${Math.round(this.currentTrack.audio.duration)}`;
-    this.authorText.innerHTML = `${this.currentTrack.author} -`;
-    this.trackName.innerHTML = `- ${this.currentTrack.name}`;
+    window.onload = () => this.setTrackDescription();
+
+    this.setTrackDescription();
 
     this.descriptionContainer.append(this.authorText);
     this.descriptionContainer.append(this.trackName);
@@ -146,7 +135,6 @@ class App {
     this.container.append(this.footer);
     this.appWrap.append(this.container);
 
-    document.body.append(this.audio);
     document.body.append(this.appWrap);
   }
 
