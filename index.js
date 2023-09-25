@@ -24,7 +24,7 @@ class App {
     this.previousTrackBTN = createElement({ tagName: 'button', className: '', text: '<<' });
     this.progressBar = createElement({ tagName: 'input', className: 'progress-bar' });
     this.currentTime = createElement({ tagName: 'span', className: 'current-time', text: '0s' });
-    this.trackTime = createElement({ tagName: 'span', className: 'track-time' });
+    this.trackTime = createElement({ tagName: 'span', className: 'track-time', text: '0' });
     this.timeContainer = createElement({ tagName: 'div', className: 'time-container'});
     this.authorText = createElement({ tagName: 'p', className: '' });
     this.trackName = createElement({ tagName: 'p', className: '' });
@@ -111,12 +111,12 @@ class App {
     this.coverImg.style.backgroundImage = this.currentTrack.coverUrl;
     this.progressBar.value = 0;
 
-    setTimeout(() => {
+    window.onload = () => {
       this.trackTime.innerHTML = (this.currentTrack.audio.duration/ 60).toFixed(2);
       this.progressBar.max = `${Math.round(this.currentTrack.audio.duration)}`;
       this.authorText.innerHTML = `${this.currentTrack.author} -`;
       this.trackName.innerHTML = `- ${this.currentTrack.name}`;
-    }, 100);
+    }
 
     this.descriptionContainer.append(this.authorText);
     this.descriptionContainer.append(this.trackName);
