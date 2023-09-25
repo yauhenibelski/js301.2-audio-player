@@ -117,6 +117,10 @@ class App {
       this.authorText.innerHTML = `${this.currentTrack.author} -`;
       this.trackName.innerHTML = `- ${this.currentTrack.name}`;
     }
+    this.trackTime.innerHTML = (this.currentTrack.audio.duration/ 60).toFixed(2);
+    this.progressBar.max = `${Math.round(this.currentTrack.audio.duration)}`;
+    this.authorText.innerHTML = `${this.currentTrack.author} -`;
+    this.trackName.innerHTML = `- ${this.currentTrack.name}`;
 
     this.descriptionContainer.append(this.authorText);
     this.descriptionContainer.append(this.trackName);
