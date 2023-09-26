@@ -1,17 +1,6 @@
-const music = [
-  {
-    audio: new Audio('./assets/Insane_Clown_Posse-HallsOfIllusions.mp3'),
-    coverUrl: 'url(./assets/desktop-wallpaper-album-insane-clown-posse-riddle-box.jpg)',
-    author: 'Insane Clown Posse',
-    name: 'Halls Of Illusions'
-  },
-  {
-    audio: new Audio('./assets/Insane_Clown_Posse-MyAxe.mp3'),
-    coverUrl: 'url(./assets/cover.png)',
-    author: 'Insane Clown Posse',
-    name: 'My Axe'
-  }
-]
+import { createElement } from "./createElement.js";
+import { music } from "./music.js";
+
 class App {
   constructor() {
     this.appWrap = createElement({ tagName: 'div', className: 'app-wrap' });
@@ -139,7 +128,7 @@ class App {
   }
 
   render() {
-    document.body.innerHTML = '';
+    this.container.innerHTML = '';
     this.createElements();
   }
 
@@ -151,14 +140,3 @@ class App {
 
 const app = new App();
 app.ran();
-
-function createElement(obj) {
-  const elem = document.createElement(`${obj.tagName}`);
-  if (obj.className) {
-    elem.classList.add(`${obj.className}`);
-  }
-  if (obj.text) {
-    elem.innerHTML = `${obj.text}`;
-  }
-  return elem;
-}
