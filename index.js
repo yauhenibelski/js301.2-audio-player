@@ -96,9 +96,7 @@ class App {
     this.coverImg.style.backgroundImage = this.currentTrack.coverUrl;
     this.progressBar.value = 0;
 
-    window.onload = () => this.setTrackDescription();
-
-    this.setTrackDescription();
+    this.currentTrack.audio.oncanplay = () => this.setTrackDescription();
 
     this.descriptionContainer.append(this.authorText);
     this.descriptionContainer.append(this.trackName);
